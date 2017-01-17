@@ -1,75 +1,113 @@
-from turtle import Turtle
-
+import turtle
 from core.errors import InvalidAngleError, InvalidShapeError
 
 
-# class Shape(Drawer):
+class DrawerSettings(turtle.Turtle):
+    def __init__(self):
+        super(DrawerSettings, self).__init__()
 
-class Drawer(Turtle):
-    def __init__(self, **kwargs):
-        super(Drawer, self).__init__()
-        self.drawer = Turtle()
-        self.drawer.shape(kwargs.get('shape', 'arrow'))
+    def set_mode(self, mode_name):
+        self._mode(mode_name)
 
-    def line(self, length, direction=None, angle=None):
+    def set_pencolor(self, r, g, b):
+        """
+        :param r:
+        :param g:
+        :param b:
+        :return:
+        """
+        self.pencolor(r, g, b)
+
+    def window_size(self, width, height, startx, starty):
+        self._screen.setup(width, height, startx, starty)
+
+
+class DrawerScreen(turtle.TurtleScreen):
+    def __init__(self, cv):
+        super(DrawerScreen, self).__init__(cv)
+
+    def set_screensize(self):
+        self.screensize(canvheight=10, canvwidth=20)
+
+    def set_defaulthome(self, lowerX, lowerY, upperX, upperY):
+        """"
+        Set up user-defined coordinate system and switch to mode “world” if necessary. This performs a screen.reset(). If mode “world” is already active, all drawings are redrawn according to the new coordinates.
+
+        ATTENTION: in user-defined coordinate systems angles may appear distorted.
+        :param upperX:
+        :param upperY:
+        :param lowerY
+        :param lowerX
+        """
+        self.setworldcoordinates(lowerX, lowerY, upperX, upperY)
+
+    def setscreen(self):
+        self.setup()
+
+    def set_color_mode(self, color):
+        """"
+        :type color: object
+        """
+        self.colormode(color)
+
+    def set_background(self, color):
+        """
+        Set or return background color of the TurtleScreen.
+
+        :param color:
+        :return:
+        """
+        self.bgcolor(color)
+
+    def window_size(self, width,height):
+        self.setup()
+
+    def set_bgpic(self, picture):
         """
 
+        :param picture:
+        :return:
+        """
+        self.set_bgpic(picture)
+
+    def clear_screen(self):
+        self.clearscreen()
+
+
+class Drawer(DrawerSettings, DrawerScreen):
+    def __init__(self, **kwargs):
+        super(Drawer, self).__init__()
+
+    def arrow(self):
+        pass
+
+    def line(self, length, direction):
+        """
         :param length:
         :param direction:
         :param angle:
         :return:
         """
-        if not direction or direction == "right":
-            self.drawer.forward(length)
-        elif direction == "left":
-            self.drawer.backward(length)
-        elif direction == "up" and not angle:
-            self.up(90, length=length)
-
-    def up(self, angle, length=None):
-        """
-
-        :param angle:
-        :param length:
-        :return:
-        """
-        self.drawer.setheading(angle)
+        self.setheading(direction)
         self.forward(length)
 
-    def down(self, angle, length=None):
+    def turn(self, angle):
         """
 
-        :param angle:
-        :param length:
         :return:
         """
-        if not angle < 0:
-            raise InvalidAngleError("The angle for moving the drawer down should be negative")
-        self.drawer.setheading(angle)
-        self.forward(length)
+        self.setheading(angle)
 
-    def shape(self, name=None):
-        """
+    def __circle(self, radius):
+        self.circle(radius)
 
-        :param name:
-        :return:
-        """
-        supported_shapes = ['arrow', 'turtle', 'circle', 'square', 'triangle', 'classic']
-        if name not in supported_shapes:
-            raise InvalidShapeError("The shape {0} is not part of the supported shapes. \ "
-                                    "The supported shapes are {1}"
-                                    "As a \n fix, you can consider \
-                                    creating the shape by calling the register_shape method.".format(name,
+    def semi_circle(self, radius):
+        self.left(90)
+        for x in range(180):
+            self.forward(1)
+            self.right(1)
+        self.right(90)
+        self.forward(radius)
 
-                                                                                                     supported_shapes))
 
-    def register_shape_gif(self, gif):
-        """
 
-        :param gif:
-        :return:
-        """
-        pass
-
-    def register_shape_custom(self):
-        pass
